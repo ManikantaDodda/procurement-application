@@ -1,28 +1,55 @@
 import { Item } from "../models/Items.js";
-import multer from "multer";
+import { MULTERUPLOAD } from "../helper/multer_config.js";
 import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
+import { Readable } from "stream"; 
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
+const upload = MULTERUPLOAD.array('itemImages', 5);
 
-const upload = multer({ storage }).array('itemImages', 5);
+const itemUploader = async (buffer) => {
+    try {
+        const result = await uploadImageFromBuffer(buffer);
+        return result.url;
+    } catch (error) {
+        console.error("Image upload error:", error.message);
+        throw error;
+    }
+};
+
+const uploadImageFromBuffer = (buffer) => {
+    return new Promise((resolve, reject) => {
+        const bufferStream = Readable.from(buffer);
+
+        const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "groupchat" },
+            (error, result) => {
+                if (error) {
+                    console.error('Upload Error:', error);
+                    return reject(error);
+                }
+                console.log('Upload Result:', result);
+                resolve(result);
+            }
+        );
+
+        bufferStream.pipe(uploadStream);
+    });
+};
 
 export const createItem = async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) return res.status(500).send({status : "error" , message : err});
+    upload(req, res, async (err) => {
+        if (err) return res.status(500).send({ status: "error", message: err.message });
 
-    try {
-      const count = await Item.countDocuments() + 1;
-      const images = req.files.map((file) => file.path);
-      const item = new Item({ ...req.body, itemNo: `ITM${count}`, itemImages: images });
-      await item.save();
-      res.status(201).json(item);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  });
+        try {
+            const count = await Item.countDocuments() + 1;
+            const images = await Promise.all(req.files.map((file) => itemUploader(file.buffer)));
+            const item = new Item({ ...req.body, itemNo: `ITM${count}`, itemImages: images });
+            await item.save();
+            res.status(201).json(item);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    });
 };
 
 export const getItems = async (req, res) => {

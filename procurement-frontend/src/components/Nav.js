@@ -12,7 +12,7 @@ function NavBar() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="text-right">
             <NavDropdown title="Suppliers" id="suppliers-dropdown">
-              <LinkContainer to="/supplier">
+              <LinkContainer to="/">
                 <NavDropdown.Item>Supplier List</NavDropdown.Item>
               </LinkContainer>
               <LinkContainer to="/supplier-form">

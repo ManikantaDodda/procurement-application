@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Table, Button, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
+import ImageComponent from './ImageComponent';
 function ItemList() {
   const [items, setItems] = useState([]);
 
@@ -55,6 +55,7 @@ function ItemList() {
             <th>Supplier</th>
             <th>Stock Unit</th>
             <th>Unit Price</th>
+            <th>Image</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -71,6 +72,7 @@ function ItemList() {
               <td>{item?.supplier?.supplierName}</td>
               <td>{item.stockUnit}</td>
               <td>${item.unitPrice.toFixed(2)}</td>
+              <td><ImageComponent images={item?.itemImages}/></td>
               <td>{item.status}</td>
               <td>
                 <Button
