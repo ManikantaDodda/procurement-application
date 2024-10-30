@@ -1,5 +1,5 @@
 import express from 'express';
-import connectDB from "./helper/dbConnection.js";
+import connectDB from "./helper/dbconnection.js";
 import { createServer } from 'http';
 import * as dotenv from 'dotenv';
 import cors from "cors";

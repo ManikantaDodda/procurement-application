@@ -54,7 +54,12 @@ export const createItem = async (req, res) => {
 
 export const getItems = async (req, res) => {
   try {
-    const items = await Item.find().populate('supplier');
+    let where = {};
+    if(req.query.status !== 'all')
+    {
+        where = {status : "Enabled"};
+    }
+    const items = await Item.find(where).populate('supplier');
     res.json(items);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -74,7 +79,7 @@ export const supplierItems = async (req, res) => {
             return res.status(400).send({ status: "error", message: "Invalid supplier ID" });
         }
 
-        const items = await Item.find({ supplier: supplierId});
+        const items = await Item.find({ supplier: supplierId, status : "Enabled" });
 
         return res.send({ status: "success", message: "Fetched Successfully", data: items });
     } catch (err) {
