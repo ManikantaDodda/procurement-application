@@ -251,8 +251,8 @@ function PurchaseOrderForm() {
           <p>Net Amount: <strong>{purchaseOrder.netAmount || 0}</strong></p>
         </div>
 
-        <Button variant="primary" type="submit" block>
-          Create Purchase Order
+        <Button variant="primary" type="submit" className='w-100'>
+           Purchase 
         </Button>
       </Form>
     </Container>

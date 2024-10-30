@@ -40,7 +40,7 @@ function ItemList() {
       <h3 className="text-center mb-4">Item List</h3>
       <Link to="/item-form">
         <Button variant="primary" className="mb-3">
-          Create New Item
+          + Create New Item
         </Button>
       </Link>
       <Table bordered hover responsive className="text-center">

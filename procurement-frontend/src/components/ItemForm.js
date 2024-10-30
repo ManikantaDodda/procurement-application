@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../services/api';
 import { Form, Button, Row, Col,Container } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ImagePreview from './ImagePreview';
 
 function ItemForm() {
+  const imageRef = useRef();
   const [item, setItem] = useState({
     itemName: '',
     inventoryLocation: '',
@@ -118,6 +119,8 @@ function ItemForm() {
         itemImages: [],
         status: 'Enabled'
       });
+      setImagePreviews([]);
+      imageRef.current.value = '';
     } catch (error) {
       console.error('Error adding item:', error);
       toast.error('Error adding item');
@@ -266,6 +269,7 @@ function ItemForm() {
       <Form.Group className="mb-3">
         <Form.Label>Item Images</Form.Label>
         <Form.Control
+          ref={imageRef}
           type="file"
           name="itemImages"
           multiple
